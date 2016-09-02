@@ -42,6 +42,7 @@ contract IssuePokemon is owned {
     mapping (address => uint256) public pokeOwnerIndex;
     mapping (uint => uint256) public pokemonIndex;
     mapping (address => uint256) public totalPokemonsFromMaster;
+    mapping (address => uint256[]) public balanceOf;
 
     struct Pokemon {
         uint pokeNumber;
@@ -154,7 +155,7 @@ contract IssuePokemon is owned {
         return (_pokemonID, _from, _to);
     }
     
-    function addPokemonToMaster(address _pokemonOwner, uint256 _pokemonID)  returns (address pokeOwner, uint[] pokemons, uint pokemonsTotal) {
+    function addPokemonToMaster(address _pokemonOwner, uint256 _pokemonID) internal returns (address pokeOwner, uint[] pokemons, uint pokemonsTotal) {
         uint ownerID = pokeOwnerIndex[_pokemonOwner];
         PokemonMaster o = pokeMasters[ownerID];
         uint[] pokeList = o.pokemons;
@@ -177,13 +178,14 @@ contract IssuePokemon is owned {
             uint j = pokeList.length++;
             o.pokemons[j] = _pokemonID;
         }    
+        balanceOf[_pokemonOwner] = cleanArray(o.pokemons);
         
         qtdePokemons(_pokemonOwner);
         UpdateMasterPokemons(_pokemonOwner, o.pokemons.length);
         return (_pokemonOwner, o.pokemons, o.pokemons.length);
     }
     
-    function delPokemonFromMaster(address _pokemonOwner, uint256 _pokemonID)  returns (address pokeOwner, uint[] pokemons, uint pokemonsTotal) {
+    function delPokemonFromMaster(address _pokemonOwner, uint256 _pokemonID) internal  returns (address pokeOwner, uint[] pokemons, uint pokemonsTotal) {
         uint ownerID = pokeOwnerIndex[_pokemonOwner];
         PokemonMaster o = pokeMasters[ownerID];
         uint[] pokeList = o.pokemons;
@@ -195,7 +197,9 @@ contract IssuePokemon is owned {
         }
         
         // http://ethereum.stackexchange.com/questions/3373/how-to-clear-large-arrays-without-blowing-the-gas-limit
-        o.pokemons=pokeList; // Se usar delete, usa a propria pokeList
+        o.pokemons=cleanArray(pokeList); // Se usar delete, usa a propria pokeList
+        
+        balanceOf[_pokemonOwner] = cleanArray(o.pokemons);
         
         qtdePokemons(_pokemonOwner);
         UpdateMasterPokemons(_pokemonOwner, o.pokemons.length);
@@ -205,9 +209,13 @@ contract IssuePokemon is owned {
     function listPokemons( address _pokeOwner )  returns (address, uint[]){
         uint ownerID = pokeOwnerIndex[_pokeOwner];
         PokemonMaster o = pokeMasters[ownerID];
-        return ( _pokeOwner, o.pokemons );
+        
+        /* Lista pokemons tanto do struct quanto do mapping. */
+        //return ( _pokeOwner, o.pokemons );
+        return ( _pokeOwner, balanceOf[_pokeOwner] );
     }
     
+    /* Conta a qtde de pokemons em um array que possui zeros */
     function qtdePokemons( address _pokeOwner)  returns (uint qtde){
         uint ownerID = pokeOwnerIndex[_pokeOwner];
         PokemonMaster o = pokeMasters[ownerID];
@@ -220,6 +228,29 @@ contract IssuePokemon is owned {
         }
         totalPokemonsFromMaster[_pokeOwner] = count;
         return count;
+    }
+    
+    /* Conta a qtde de pokemons diretamente do mapping */
+    function qtdePokemonsMapping( address _pokeOwner)  returns (uint qtde){
+        uint[] tempList = balanceOf[_pokeOwner];
+        totalPokemonsFromMaster[_pokeOwner] = tempList.length;
+        return tempList.length;
+    }
+    
+    
+    /* Esta funcao elimina todos os itens com zero do array, ao custo de gas */
+    function cleanArray(uint[] pokeList) internal returns (uint[]){
+        uint[] memory tempArray = new uint[](pokeList.length);
+        uint j = 0;
+        for (uint i=0; i < pokeList.length; i++){
+            if ( pokeList[i] > 0 ){
+                tempArray[j] = pokeList[i];
+                j++;
+            }
+        }
+        uint[] memory tempArray2 = new uint[](j);
+        for (i=0; i< j; i++) tempArray2[i] = tempArray[i];
+        return tempArray2;
     }
 
     /* Se tentarem enviar ether para o end desse contrato, ele rejeita */
