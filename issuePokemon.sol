@@ -40,6 +40,7 @@ contract IssuePokemon is owned {
 
     mapping (uint256 => address) public pokemonToMaster;
     mapping (address => uint256) public pokeOwnerIndex;
+    mapping (uint => uint256) public pokemonIndex;
     mapping (address => uint256) public totalPokemonsFromMaster;
 
     struct Pokemon {
@@ -66,6 +67,7 @@ contract IssuePokemon is owned {
     /* This generates a public event on the blockchain that will notify clients */
     event Transfer(address from, address to, uint256 value);
     event CreatePokemon(uint id, string name, uint cp, uint hp );
+    event UpdatePokemon(uint id, string name, uint cp, uint hp );
     event UpdateMasterPokemons(address owner, uint total);
     event Log1(uint number);
     event Log2(string message);
@@ -103,7 +105,7 @@ contract IssuePokemon is owned {
         //p.pokemonHash = sha3(p.pokeNumber,p.pokeName,p.pokeType,p.pokeCP,p.pokeHP, p.pokeAttack, p.pokeAttackPower, p.pokeSpecial, p.pokeSpecialPower);
         p.pokemonHash = sha3(p.pokeNumber,p.pokeName,p.pokeType,p.pokeCP,p.pokeHP);
         p.pokeOwner = owner;
-        
+        pokemonIndex[pokemonNumber] = pokemonID;
         pokemonToMaster[pokemonID] = owner;
         addPokemonToMaster(owner, pokemonID);
         
@@ -111,6 +113,24 @@ contract IssuePokemon is owned {
         CreatePokemon(pokemonID, p.pokeName, p.pokeCP, p.pokeHP);
         return true;
     }
+    
+    function updatePokemon(uint _pokemonNumber, uint _cp, uint _hp )  returns (bool success) {
+        uint pokemonID = pokemonIndex[_pokemonNumber];
+        Pokemon p = pokemons[pokemonID];
+        p.pokeCP = _cp;
+        p.pokeHP = _hp;
+        //p.pokeAttack = attack;
+        //p.pokeAttackPower = attackPower;
+        //p.pokeSpecial = special;
+        //p.pokeSpecialPower = specialPower;
+
+        //p.pokemonHash = sha3(p.pokeNumber,p.pokeName,p.pokeType,p.pokeCP,p.pokeHP, p.pokeAttack, p.pokeAttackPower, p.pokeSpecial, p.pokeSpecialPower);
+        p.pokemonHash = sha3(p.pokeNumber,p.pokeName,p.pokeType,p.pokeCP,p.pokeHP);
+
+        UpdatePokemon(pokemonID, p.pokeName, p.pokeCP, p.pokeHP);
+        return true;
+        
+    }    
     
     function newPokemonMaster(address pokemonMaster)  returns (bool success) {
         uint ownerID = pokeMasters.length++;
