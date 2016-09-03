@@ -29,7 +29,7 @@ contract owned {
 }
 
 
-contract IssuePokemon is owned {
+contract PokeCentral is owned {
 
     uint256 public totalPokemonSupply;
     address public marketAddress;
@@ -74,7 +74,7 @@ contract IssuePokemon is owned {
     event Log2(string message);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function IssuePokemon() {
+    function PokeCentral() {
         owner = msg.sender;
         newPokemonMaster(owner);                            // Todos pokemons serao criados para este owner
         newPokemon(0,0,0);                                  // Pokemon Índice 0
