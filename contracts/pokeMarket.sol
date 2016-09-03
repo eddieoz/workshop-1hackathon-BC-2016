@@ -1,15 +1,3 @@
-/*
-
-    PokeCoinAddress:"0x103d58447543DDF06F37d9BD22A81103d9EfAa80"
-    PokeCentralAdress:"0x1f71c48DB7C96e72815c7D94A194779D869eb187"
-
-    PokeSeller Address: "0xfFAe2A502A6142a00DBB54361E244ED55461C7Aa"
-    PokeBuyer Address: "0xf09c7cbD8B7D27ac12e82b8bC6d8fe7EEfC9E7C8"
-    Main Wallet: "0x6A5b342ec71DEF8aAc337b82969D9dDd811023C9"
-    
-*/
-
-
 contract pokeCoinContract { mapping (address => uint256) public balanceOf; function transferFrom(address _from, address _to, uint256 _value){  } }
 contract pokeCentralContract { mapping (uint256 => address) public pokemonToMaster; function transferPokemon(address _from, address _to, uint256 _pokemonID) {  } }
 
