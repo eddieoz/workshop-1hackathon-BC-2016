@@ -74,7 +74,7 @@ contract PokeCentral is owned {
     event Log2(string message);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function PokeCentral() {
+    function PokeCentral(address account1Demo, address account2Demo) {
         owner = msg.sender;
         newPokemonMaster(owner);                            // Todos pokemons serao criados para este owner
         newPokemon(0,0,0);                                  // Pokemon Índice 0
@@ -85,6 +85,14 @@ contract PokeCentral is owned {
         newPokemon(1,535,70);
         newPokemon(4,546,80);
         newPokemon(2,557,90);
+        
+        if (account1Demo != 0 && account2Demo != 0){
+            transferPokemon(msg.sender, account1Demo, 1);
+            transferPokemon(msg.sender, account1Demo, 4);
+            transferPokemon(msg.sender, account2Demo, 2);
+            transferPokemon(msg.sender, account2Demo, 3);
+        }
+        
 
     }
     

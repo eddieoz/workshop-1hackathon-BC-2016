@@ -1,10 +1,8 @@
 /*
-    Contract Address: "0x2ba25711fa1f94998d875bf80acbc2cccdf9abbb"
 
-    PokeCoinAddress:"0x037D274575fE52239BfeB4911A09Cc5cfCe0C9FD"
-    PokemonsAdress:"0x13EccD104f4012F857a9cD32C1E4877275f78Cec"
-    "0x037D274575fE52239BfeB4911A09Cc5cfCe0C9FD","0x13EccD104f4012F857a9cD32C1E4877275f78Cec"
-    
+    PokeCoinAddress:"0x103d58447543DDF06F37d9BD22A81103d9EfAa80"
+    PokeCentralAdress:"0x1f71c48DB7C96e72815c7D94A194779D869eb187"
+
     PokeSeller Address: "0xfFAe2A502A6142a00DBB54361E244ED55461C7Aa"
     PokeBuyer Address: "0xf09c7cbD8B7D27ac12e82b8bC6d8fe7EEfC9E7C8"
     Main Wallet: "0x6A5b342ec71DEF8aAc337b82969D9dDd811023C9"
@@ -12,12 +10,12 @@
 */
 
 
-contract pokeCoin { mapping (address => uint256) public balanceOf; function transferFrom(address _from, address _to, uint256 _value){  } }
-contract pokemon { mapping (uint256 => address) public pokemonToMaster; function transferPokemon(address _from, address _to, uint256 _pokemonID) {  } }
+contract pokeCoinContract { mapping (address => uint256) public balanceOf; function transferFrom(address _from, address _to, uint256 _value){  } }
+contract pokeCentralContract { mapping (uint256 => address) public pokemonToMaster; function transferPokemon(address _from, address _to, uint256 _pokemonID) {  } }
 
 contract pokeMarket {
-    pokeCoin public pokeCoinDapp;
-    pokemon public pokemonDapp;
+    pokeCoinContract public pokeCoin;
+    pokeCentralContract public pokeCentral;
     uint public totalPokemonSales;
     
     PokeSale[] public pokeSales;
@@ -40,14 +38,15 @@ contract pokeMarket {
     event PokeTrade(address pokeBuyerAddress, address pokeSellerAddress, uint pokemonID );
     event Log1(bool status);
     
-    function pokeMarket(pokeCoin pokeCoinAddress, pokemon pokeRepositoryAddress) {
-        pokeCoinDapp = pokeCoin(pokeCoinAddress);
-        pokemonDapp = pokemon(pokeRepositoryAddress);
+    function pokeMarket(pokeCoinContract pokeCoinAddress, pokeCentralContract pokeCentralAddress) {
+        pokeCoin = pokeCoinContract(pokeCoinAddress);
+        pokeCentral = pokeCentralContract(pokeCentralAddress);
+
         
     }
     
     function newSale(address pokeSellerAddress, uint pokemonID, uint pokemonSalePrice) returns (bool success){
-        if (pokeSellerAddress != pokemonDapp.pokemonToMaster(pokemonID)) throw;
+        if (pokeSellerAddress != pokeCentral.pokemonToMaster(pokemonID)) throw;
         if (pokeSelling[pokemonID]) throw;
         uint pokeSalesID = pokeSales.length++;
         PokeSale p = pokeSales[pokeSalesID];
@@ -70,7 +69,7 @@ contract pokeMarket {
     }
     
     function stopSale(address pokeSellerAddress, uint pokemonID){
-        if (pokeSellerAddress != pokemonDapp.pokemonToMaster(pokemonID)) throw;
+        if (pokeSellerAddress != pokeCentral.pokemonToMaster(pokemonID)) throw;
         if (!pokeSelling[pokemonID]) throw;
         
         uint pokeSalesID = pokeSaleIndex[pokemonID];
@@ -91,10 +90,10 @@ contract pokeMarket {
         uint pokeSalesID = pokeSaleIndex[pokemonID];
         PokeSale p = pokeSales[pokeSalesID];
         if (!p.pokeSellActive) throw;
-        if (pokeCoinDapp.balanceOf(pokeBuyerAddress) < p.pokePrice) throw;
+        if (pokeCoin.balanceOf(pokeBuyerAddress) < p.pokePrice) throw;
         
-        pokeCoinDapp.transferFrom(pokeBuyerAddress, p.pokeSeller, p.pokePrice);
-        pokemonDapp.transferPokemon(p.pokeSeller, pokeBuyerAddress, pokemonID);
+        pokeCoin.transferFrom(pokeBuyerAddress, p.pokeSeller, p.pokePrice);
+        pokeCentral.transferPokemon(p.pokeSeller, pokeBuyerAddress, pokemonID);
         p.pokeBuyer = pokeBuyerAddress;
         p.pokeSold = true;
         
@@ -105,11 +104,11 @@ contract pokeMarket {
     }
     
     function transferCoin(address _from, address _to, uint _value){
-        pokeCoinDapp.transferFrom(_from, _to, _value);
+        pokeCoin.transferFrom(_from, _to, _value);
     }
     
     function transferPokemon(address _from, address _to, uint _pokemonID){
-        pokemonDapp.transferPokemon(_from, _to, _pokemonID);
+        pokeCentral.transferPokemon(_from, _to, _pokemonID);
     }
     
     function addPokemonToSellingList(address pokeSellerAddress, uint pokemonID) internal {

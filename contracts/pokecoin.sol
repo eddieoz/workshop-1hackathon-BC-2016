@@ -5,7 +5,6 @@ contract Pokecoin {
     string public standard = 'Pokecoin 0.1';
     string public name = 'Pokecoin';
     string public symbol = "pkc";
-    uint8 public decimals = 0;
     uint256 public totalSupply;
 
     /* This creates an array with all balances */
@@ -16,9 +15,13 @@ contract Pokecoin {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function Pokecoin( uint256 initialSupply ) {
+    function Pokecoin( uint256 initialSupply, address account1Demo, address account2Demo ) {
         balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
         totalSupply = initialSupply;                        // Update total supply
+        if (account1Demo != 0 && account2Demo != 0){
+            transfer(account1Demo, totalSupply/2);
+            transfer(account2Demo, totalSupply/2);
+        }
         //msg.sender.send(msg.value);                         // Send back any ether sent accidentally
     }
 
