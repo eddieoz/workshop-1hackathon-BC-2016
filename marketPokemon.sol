@@ -70,12 +70,12 @@ contract MarketPokemon {
     }
     
     function stopSale(address pokeSellerAddress, uint pokemonID){
-        //if (pokeSellerAddress != pokemonDapp.pokemonToMaster(pokemonID)) throw;
-        //if (!pokeSelling[pokemonID]) throw;
+        if (pokeSellerAddress != pokemonDapp.pokemonToMaster(pokemonID)) throw;
+        if (!pokeSelling[pokemonID]) throw;
         
         uint pokeSalesID = pokeSaleIndex[pokemonID];
         PokeSale p = pokeSales[pokeSalesID];
-        //if (!p.pokeSellActive) throw;
+        if (!p.pokeSellActive) throw;
         p.pokeSellActive = false;
         pokeSelling[pokemonID] = false;
         
@@ -87,17 +87,18 @@ contract MarketPokemon {
     }
     
     function buyPokemon(address pokeBuyerAddress, uint pokemonID){
-        //if (!pokeSelling[pokemonID]) throw;
+        if (!pokeSelling[pokemonID]) throw;
         uint pokeSalesID = pokeSaleIndex[pokemonID];
         PokeSale p = pokeSales[pokeSalesID];
-        //if (!p.pokeSellActive) throw;
-        //if (pokeCoinDapp.balanceOf(pokeBuyerAddress) < p.pokePrice) throw;
+        if (!p.pokeSellActive) throw;
+        if (pokeCoinDapp.balanceOf(pokeBuyerAddress) < p.pokePrice) throw;
         
         pokeCoinDapp.transferFrom(pokeBuyerAddress, p.pokeSeller, p.pokePrice);
         pokemonDapp.transferPokemon(p.pokeSeller, pokeBuyerAddress, pokemonID);
         p.pokeBuyer = pokeBuyerAddress;
         p.pokeSold = true;
-        stopSale(p.pokeSeller,pokemonID);
+        
+        stopSale(pokeBuyerAddress,pokemonID);
         
         PokeTrade(pokeBuyerAddress, p.pokeSeller, pokemonID );
         
