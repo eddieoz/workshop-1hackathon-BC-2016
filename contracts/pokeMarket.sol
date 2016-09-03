@@ -15,7 +15,7 @@
 contract pokeCoin { mapping (address => uint256) public balanceOf; function transferFrom(address _from, address _to, uint256 _value){  } }
 contract pokemon { mapping (uint256 => address) public pokemonToMaster; function transferPokemon(address _from, address _to, uint256 _pokemonID) {  } }
 
-contract MarketPokemon {
+contract pokeMarket {
     pokeCoin public pokeCoinDapp;
     pokemon public pokemonDapp;
     uint public totalPokemonSales;
@@ -40,7 +40,7 @@ contract MarketPokemon {
     event PokeTrade(address pokeBuyerAddress, address pokeSellerAddress, uint pokemonID );
     event Log1(bool status);
     
-    function MarketPokemon(pokeCoin pokeCoinAddress, pokemon pokeRepositoryAddress) {
+    function pokeMarket(pokeCoin pokeCoinAddress, pokemon pokeRepositoryAddress) {
         pokeCoinDapp = pokeCoin(pokeCoinAddress);
         pokemonDapp = pokemon(pokeRepositoryAddress);
         
