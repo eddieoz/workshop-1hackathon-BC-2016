@@ -1,7 +1,10 @@
 # workshop-1hackathon-BC-2016
+# Mercado Pokémon
+
 Material didático para o Workshop no 1 Hackathon BC - 7-Set-2016
 
-O conteúdo apresentado deve ser utilizado somente para fins didáticos. Este é um protótipo para estudo e aprendizado sobre o desenvolvimento de smart-contracts na plataforma Ethereum e não deve ser utilizado em produção.
+O conteúdo apresentado deve ser utilizado somente para fins didáticos. 
+Este é um protótipo para estudo e aprendizado sobre o desenvolvimento de smart-contracts na plataforma Ethereum e não deve ser utilizado em produção.
 
 ## Pré-requisitos:
 - Ethereum em Testnet
@@ -21,8 +24,11 @@ O conteúdo apresentado deve ser utilizado somente para fins didáticos. Este é
 
 ## Funcionamento: 
 
-Assim que os contratos forem carregados, eles criarão PokeCoins e Pokemons e os distribuirão entre as contas Player1 e Player2.
+Assim que os contratos forem carregados, eles criarão as PokeCoins e Pokemons, e os distribuirão entre as contas Player1 e Player2.
 Através dos arquivos html é possível colocar pokemons à venda e efetuar a compra.
 
-Se as pokecoins forem transferidas para uma conta no Mist, é possível negociá-las no mercado secundário.
+## Observação:
+É necessário que o account[0] esteja desbloqueado e possua fundos. Para isso, digite: personal.unlockAccount(eth.accounts[0]) no console.
+
+Se as pokecoins forem transferidas para uma conta no Mist, é possível negociá-las no mercado secundário, desde que a wallet possua fundos em ether para pagar o gas da transação.
 
