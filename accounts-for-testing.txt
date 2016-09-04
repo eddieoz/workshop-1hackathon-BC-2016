@@ -1,11 +1,5 @@
 Accounts for testing
 
-
-Mist Desktop
-MainAccount: 	0x6A5b342ec71DEF8aAc337b82969D9dDd811023C9
-Account1: 		0xfFAe2A502A6142a00DBB54361E244ED55461C7Aa
-Account2: 		0xf09c7cbD8B7D27ac12e82b8bC6d8fe7EEfC9E7C8
-
 Player1: 
 Seed: 'eager grow art loop sister system access know truly normal case moment'
 Account: 0x616d18096ce6e1038b5c3ded080cef8ab17b3843
@@ -13,7 +7,6 @@ Account: 0x616d18096ce6e1038b5c3ded080cef8ab17b3843
 Player2:
 Seed: 'arrest trust sword select damage outer dignity thrive practice much chase velvet'
 Account: 0x2f33f148b5ff5f76e63460e14228a671923de628
-
 
 PokeCoinAddress:	"0x5E3FF7F63FdC42cEBDb9A5C6DeCeF841A4A72e1c"
 PokeCentralAdress:	"0xa3E2170464a201AF815ef0C2636e75B585C88366"
