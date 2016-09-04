@@ -6,6 +6,11 @@ Material didático para o Workshop no 1 Hackathon BC - 7-Set-2016
 O conteúdo apresentado deve ser utilizado somente para fins didáticos. 
 Este é um protótipo para estudo e aprendizado sobre o desenvolvimento de smart-contracts na plataforma Ethereum e não deve ser utilizado em produção.
 
+## O que é o Mercado Pokémon
+Mercado Pokemón é uma demonstração do funcionamento de criação de moedas e Pokémons na plataforma Ethereum, assim como a negociação dos mesmos entre contas distintas.
+
+Também é apresentado o conceito de um ambiente sem infraestrutura, que usa o blockchain como repositório de dados e aplicações, acessado diretamente por um html standalone.
+
 ## Pré-requisitos:
 - Ethereum em Testnet
 - Mist
