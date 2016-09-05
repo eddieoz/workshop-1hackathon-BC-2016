@@ -8,6 +8,6 @@ Player2:
 Seed: 'arrest trust sword select damage outer dignity thrive practice much chase velvet'
 Account: 0x2f33f148b5ff5f76e63460e14228a671923de628
 
-PokeCoinAddress:	"0x13EccD104f4012F857a9cD32C1E4877275f78Cec"
-PokeCentralAdress:	"0xe46A592b722EAD6cEC7E0Eb736dEB59dbb325CAb"
-pokeMarketAddress: 	"0x0fd5c4D42e5E46aEe2A78bf8919ec60B03e4a80d"
+PokeCoinAddress:	"0x87DfA87D0b8296294529F4F7B6838e23B385659E"
+PokeCentralAdress:	"0x0f8CEa63A5ccdAa0D44b80C41A902d20D8865941"
+pokeMarketAddress: 	"0x14F83519a11f4F8fA7133FF55740E79Fd6dDb1de"
