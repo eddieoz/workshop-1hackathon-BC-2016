@@ -3,7 +3,7 @@
 
 contract owned {
     address public owner;
-    address public market;
+    address public pokeMarketAddress;
 
     function owned() {
         owner = msg.sender;
@@ -13,27 +13,22 @@ contract owned {
         if (msg.sender != owner) throw;
         _
     }
-    
-    modifier Market {
-        if (msg.sender != market || msg.sender != owner) throw;
-        _
-    }
 
     function transferOwnership(address newOwner) onlyOwner {
         owner = newOwner;
     }
     
-    function updateMarket(address newMarket) onlyOwner {
-        market = newMarket;
+    function updatePokeMarketAddress(address marketAddress) onlyOwner {
+        pokeMarketAddress = marketAddress;
     }
+    
 }
 
 
 contract PokeCentral is owned {
 
     uint256 public totalPokemonSupply;
-    address public marketAddress;
-    
+
     Pokemon[] public pokemons;
     PokemonMaster[] public pokeMasters;
 
@@ -76,6 +71,8 @@ contract PokeCentral is owned {
     /* Initializes contract with initial supply tokens to the creator of the contract */
     function PokeCentral(address account1Demo, address account2Demo) {
         owner = msg.sender;
+        
+
         newPokemonMaster(owner);                            // Todos pokemons serao criados para este owner
         newPokemon(0,0,0);                                  // Pokemon Índice 0
         totalPokemonSupply-=1;                              // Ajusta o total de pokemons porque o primeiro é fake
@@ -97,8 +94,7 @@ contract PokeCentral is owned {
     }
     
     //function newPokemon(uint pokemonNumber, uint cp, uint hp, string attack, uint attackPower, string special, uint specialPower ) returns (bool success) { // cp e hp fornecidos por https://api.random.org/json-rpc/1/basic
-    function newPokemon(uint pokemonNumber, uint cp, uint hp )  returns (bool success) { // cp e hp fornecidos por https://api.random.org/json-rpc/1/basic
-        address owner = msg.sender;
+    function newPokemon(uint pokemonNumber, uint cp, uint hp ) onlyOwner returns (bool success) { // cp e hp fornecidos por https://api.random.org/json-rpc/1/basic
         uint pokemonID = pokemons.length++;
         Pokemon p = pokemons[pokemonID];
         p.pokeNumber = pokemonNumber;
@@ -123,7 +119,7 @@ contract PokeCentral is owned {
         return true;
     }
     
-    function updatePokemon(uint _pokemonNumber, uint _cp, uint _hp )  returns (bool success) {
+    function updatePokemon(uint _pokemonNumber, uint _cp, uint _hp ) onlyOwner returns (bool success) {
         uint pokemonID = pokemonIndex[_pokemonNumber];
         Pokemon p = pokemons[pokemonID];
         p.pokeCP = _cp;
@@ -141,7 +137,7 @@ contract PokeCentral is owned {
         
     }    
     
-    function newPokemonMaster(address pokemonMaster)  returns (bool success) {
+    function newPokemonMaster(address pokemonMaster) onlyOwner returns (bool success) {
         uint ownerID = pokeMasters.length++;
         PokemonMaster o = pokeMasters[ownerID];
         o.pokeMaster = pokemonMaster;
@@ -150,7 +146,8 @@ contract PokeCentral is owned {
     }
     
 
-    function transferPokemon(address _from, address _to, uint256 _pokemonID)   returns (uint pokemonID, address from, address to) {
+    function transferPokemon(address _from, address _to, uint256 _pokemonID) returns (uint pokemonID, address from, address to) {
+        if (msg.sender != owner && msg.sender != pokeMarketAddress) throw;
         Pokemon p = pokemons[_pokemonID];
         if (p.pokeOwner != _from) throw;
         if (pokeOwnerIndex[_to] == 0 && _to != pokemonToMaster[0] ) newPokemonMaster(_to);
@@ -164,6 +161,8 @@ contract PokeCentral is owned {
     }
     
     function addPokemonToMaster(address _pokemonOwner, uint256 _pokemonID) internal returns (address pokeOwner, uint[] pokemons, uint pokemonsTotal) {
+        if (msg.sender != owner && msg.sender != pokeMarketAddress) throw;
+
         uint ownerID = pokeOwnerIndex[_pokemonOwner];
         PokemonMaster o = pokeMasters[ownerID];
         uint[] pokeList = o.pokemons;
@@ -194,6 +193,8 @@ contract PokeCentral is owned {
     }
     
     function delPokemonFromMaster(address _pokemonOwner, uint256 _pokemonID) internal  returns (address pokeOwner, uint[] pokemons, uint pokemonsTotal) {
+        if (msg.sender != owner && msg.sender != pokeMarketAddress) throw;
+ 
         uint ownerID = pokeOwnerIndex[_pokemonOwner];
         PokemonMaster o = pokeMasters[ownerID];
         uint[] pokeList = o.pokemons;
@@ -224,7 +225,9 @@ contract PokeCentral is owned {
     }
     
     /* Conta a qtde de pokemons em um array que possui zeros */
-    function qtdePokemons( address _pokeOwner)  returns (uint qtde){
+    function qtdePokemons( address _pokeOwner) internal returns (uint qtde){
+        if (msg.sender != owner && msg.sender != pokeMarketAddress) throw;
+
         uint ownerID = pokeOwnerIndex[_pokeOwner];
         PokemonMaster o = pokeMasters[ownerID];
         uint[] pokeList = o.pokemons;
@@ -239,7 +242,7 @@ contract PokeCentral is owned {
     }
     
     /* Conta a qtde de pokemons diretamente do mapping */
-    function qtdePokemonsMapping( address _pokeOwner)  returns (uint qtde){
+    function qtdePokemonsMapping( address _pokeOwner) internal returns (uint qtde){
         uint[] tempList = balanceOf[_pokeOwner];
         totalPokemonsFromMaster[_pokeOwner] = tempList.length;
         return tempList.length;

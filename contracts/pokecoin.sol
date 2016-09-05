@@ -1,6 +1,29 @@
 contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
 
-contract Pokecoin {
+contract owned {
+    address public owner;
+    address public pokeMarketAddress;
+
+    function owned() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner {
+        if (msg.sender != owner) throw;
+        _
+    }
+
+    function transferOwnership(address newOwner) onlyOwner {
+        owner = newOwner;
+    }
+    
+    function updatePokeMarketAddress(address marketAddress) onlyOwner {
+        pokeMarketAddress = marketAddress;
+    }
+    
+}
+
+contract Pokecoin is owned{
     /* Public variables of the token */
     string public standard = 'Pokecoin 0.1';
     string public name = 'Pokecoin';
@@ -15,7 +38,9 @@ contract Pokecoin {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function Pokecoin( uint256 initialSupply, address account1Demo, address account2Demo ) {
+    function Pokecoin( uint256 initialSupply, address account1Demo, address account2Demo) {
+        owner = msg.sender;
+        
         balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
         totalSupply = initialSupply;                        // Update total supply
         if (account1Demo != 0 && account2Demo != 0){
@@ -26,38 +51,32 @@ contract Pokecoin {
     }
 
     /* Send coins */
-    function transfer(address _to, uint256 _value) {
+    function transfer(address _to, uint256 _value) onlyOwner {
         if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough
         if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows
         balanceOf[msg.sender] -= _value;                     // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
         Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
     }
-
-    /* Allow another contract to spend some tokens in your behalf */
-    function approve(address _spender, uint256 _value)
-        returns (bool success) {
-        allowance[msg.sender][_spender] = _value;
-        return true;
+    
+    function issueNew(uint256 newSupply) onlyOwner{
+        balanceOf[msg.sender] += newSupply;
+        totalSupply += newSupply;
     }
-
-    /* Approve and then comunicate the approved contract in a single tx */
-    function approveAndCall(address _spender, uint256 _value, bytes _extraData) returns (bool success) {
-        tokenRecipient spender = tokenRecipient(_spender);
-        if (approve(_spender, _value)) {
-            spender.receiveApproval(msg.sender, _value, this, _extraData);
-            return true;
-        }
-    }        
+    
+    function vanishCoins(uint256 qtdCoinsToDelete) onlyOwner{
+        balanceOf[msg.sender] -= qtdCoinsToDelete;
+        totalSupply -= qtdCoinsToDelete;
+    }
 
     /* A contract attempts to get the coins */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        if (msg.sender != owner && msg.sender != pokeMarketAddress) throw;
+
         if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
         if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
-        //if (_value > allowance[_from][msg.sender]) throw;   // Check allowance
         balanceOf[_from] -= _value;                          // Subtract from the sender
         balanceOf[_to] += _value;                            // Add the same to the recipient
-        //allowance[_from][msg.sender] -= _value;
         Transfer(_from, _to, _value);
         return true;
     }

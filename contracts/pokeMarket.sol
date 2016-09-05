@@ -1,7 +1,27 @@
 contract pokeCoinContract { mapping (address => uint256) public balanceOf; function transferFrom(address _from, address _to, uint256 _value){  } }
 contract pokeCentralContract { mapping (uint256 => address) public pokemonToMaster; function transferPokemon(address _from, address _to, uint256 _pokemonID) {  } }
 
-contract pokeMarket {
+contract owned {
+    address public owner;
+
+    function owned() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner {
+        if (msg.sender != owner) throw;
+        _
+    }
+    
+
+    function transferOwnership(address newOwner) onlyOwner {
+        owner = newOwner;
+    }
+    
+    
+}
+
+contract pokeMarket is owned {
     pokeCoinContract public pokeCoin;
     pokeCentralContract public pokeCentral;
     uint public totalPokemonSales;
@@ -27,13 +47,14 @@ contract pokeMarket {
     event Log1(bool status);
     
     function pokeMarket(pokeCoinContract pokeCoinAddress, pokeCentralContract pokeCentralAddress) {
+        owner = msg.sender;
         pokeCoin = pokeCoinContract(pokeCoinAddress);
         pokeCentral = pokeCentralContract(pokeCentralAddress);
 
         
     }
     
-    function newSale(address pokeSellerAddress, uint pokemonID, uint pokemonSalePrice) returns (bool success){
+    function newSale(address pokeSellerAddress, uint pokemonID, uint pokemonSalePrice)  onlyOwner returns (bool success){
         if (pokeSellerAddress != pokeCentral.pokemonToMaster(pokemonID)) throw;
         if (pokeSelling[pokemonID]) throw;
         uint pokeSalesID = pokeSales.length++;
@@ -56,7 +77,8 @@ contract pokeMarket {
         return (true);
     }
     
-    function stopSale(address pokeSellerAddress, uint pokemonID){
+    function stopSale(address pokeSellerAddress, uint pokemonID) onlyOwner {
+        if (msg.sender != owner && msg.sender != pokeSellerAddress) throw;
         if (pokeSellerAddress != pokeCentral.pokemonToMaster(pokemonID)) throw;
         if (!pokeSelling[pokemonID]) throw;
         
@@ -73,7 +95,7 @@ contract pokeMarket {
         StopSale(pokeSellerAddress, pokemonID);
     }
     
-    function buyPokemon(address pokeBuyerAddress, uint pokemonID){
+    function buyPokemon(address pokeBuyerAddress, uint pokemonID) {
         if (!pokeSelling[pokemonID]) throw;
         uint pokeSalesID = pokeSaleIndex[pokemonID];
         PokeSale p = pokeSales[pokeSalesID];
@@ -91,23 +113,29 @@ contract pokeMarket {
         
     }
     
-    function transferCoin(address _from, address _to, uint _value){
+    function transferCoin(address _from, address _to, uint _value) onlyOwner internal {
         pokeCoin.transferFrom(_from, _to, _value);
     }
     
-    function transferPokemon(address _from, address _to, uint _pokemonID){
+    function transferPokemon(address _from, address _to, uint _pokemonID) onlyOwner internal {
         pokeCentral.transferPokemon(_from, _to, _pokemonID);
     }
     
-    function addPokemonToSellingList(address pokeSellerAddress, uint pokemonID) internal {
+    function addPokemonToSellingList(address pokeSellerAddress, uint pokemonID) onlyOwner internal {
         uint[] tempList = pokeMasterSelling[pokeSellerAddress];
         tempList[tempList.length++] = pokemonID;
         
         pokeMasterSelling[pokeSellerAddress] = cleanArray(tempList);
     }
     
+    function updatePokecoinAndPokemarketAddresses(address newPokecoinAddress, address newPokecentralAddress) onlyOwner {
+        pokeCoin = pokeCoinContract(newPokecoinAddress);
+        pokeCentral = pokeCentralContract(newPokecentralAddress);
+        
+    }    
     
-    function delPokemonFromSellingList(address pokeSellerAddress, uint pokemonID) internal {
+    
+    function delPokemonFromSellingList(address pokeSellerAddress, uint pokemonID) onlyOwner internal {
         uint[] tempList = pokeMasterSelling[pokeSellerAddress];
         uint count = tempList.length;
         
@@ -120,7 +148,7 @@ contract pokeMarket {
     
     
     /* Esta funcao elimina todos os itens com zero do array, ao custo de gas */
-    function cleanArray(uint[] pokeList) internal returns (uint[]){
+    function cleanArray(uint[] pokeList) onlyOwner internal returns (uint[]) {
         uint[] memory tempList = new uint[](pokeList.length);
         uint j = 0;
         for (uint i=0; i < pokeList.length; i++){
