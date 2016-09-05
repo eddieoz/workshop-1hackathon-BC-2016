@@ -1,65 +1,49 @@
 <!doctype>
-    <html>
-    <body>
+<html>
+<head>
 	<script type="text/javascript" src="../js/web3.js"></script>
 	<script type="text/javascript" src="../js/lightwallet.js"></script>
 	<script type="text/javascript" src="../js/hooked-web3-provider.js"></script>
     <script type="text/javascript">
 
+		/* NUNCA armazene a seed hardcoded. Está aqui apenas para fins didáticos do workshop */
 		var seed = 'eager grow art loop sister system access know truly normal case moment';
 
 	</script>
 	<script type="text/javascript" src="../js/mercadopokemon.js"></script>
-    </head>
-    <body bgcolor="#E6E6FA">
-        <h1>Mercado Pokemon</h1>
-        <h2>Player 1</h2>
+</head>
+<body bgcolor="#E6E6FA">
+    <h1>Mercado Pokemon</h1>
+    <h2>Player 1</h2>
 
-		<div id="accountAddress"></div>
-		<div id="seed"></div>
-		<br />
-		<div id="currbalance"></div>
-		<div id="totalPokemons"></div>
-		<div id="pokemonList"></div>
-		<div id="status"></div>
-		<div id="reg"></div>
-		<div id="call"></div>
-		<div id="origbalance"></div>
-		<div id="diffbalance"></div>
-		
-		<!--<div>
-            Armazenar:
+	<div id="accountAddress"></div>
+	<div id="seed"></div>
+	<br />
+	<div id="currbalance"></div>
+	<div id="totalPokemons"></div>
+	<div id="pokemonList"></div>
+	<div id="status"></div>
 
-            <button onclick="setSignature()">Save</button>
-        </div>
+	<div>
+		<h2>Mercado Ativo.</h2>
+		<div id="pokeSells">
+	</div>	
 
-        <div>
-            Resgatar:
-            <input type="string" id="query" onkeyup='getHash()'>
-            <div id="queryres"></div>
-        </div>
-		-->
-
-		<div>
-			<h2>Mercado Ativo.</h2>
-			<div id="pokeSells">
-		</div>	
-
-		<div>
-			<h2>Vender Pokemon.</h2>
-			ID: <input type="number" id="pokeIDSell">
-			Preço: <input type="number" id="pokePriceSell"> pkc 
-			<button onclick="setSell()">Vender</button>
-			<div id='msgVenda'></div>
-		</div>	
-		<div>
-			<h2>Comprar Pokemon.</h2>
-			ID: <input type="number" id="pokeIDBuy">
-			<button onclick="setBuy()">Comprar</button>
-			<div id='msgCompra'></div>
-		</div>	
-    </body>
-    </html>
+	<div>
+		<h2>Vender Pokemon.</h2>
+		ID: <input type="number" id="pokeIDSell">
+		Preço: <input type="number" id="pokePriceSell"> pkc 
+		<button onclick="setSell()">Vender</button>
+		<div id='msgVenda'></div>
+	</div>	
+	<div>
+		<h2>Comprar Pokemon.</h2>
+		ID: <input type="number" id="pokeIDBuy">
+		<button onclick="setBuy()">Comprar</button>
+		<div id='msgCompra'></div>
+	</div>	
+</body>
+</html>
 
 
 
