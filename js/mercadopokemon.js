@@ -56,7 +56,7 @@ lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey)
 
 	accountAddress = keystore.getAddresses()[0];
 
-	document.getElementById("accountAddress").innerText = accountAddress;
+	document.getElementById("accountAddress").innerText = '0x'+accountAddress;
 	document.getElementById("seed").innerText = seed;
 		
 	web3.eth.defaultAccount = eth.accounts[0];
