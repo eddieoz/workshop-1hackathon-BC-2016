@@ -101,6 +101,7 @@ contract pokeMarket is accessControlled {
     
     /* Compra um Pokemon */
     function buyPokemon(address pokeBuyerAddress, uint pokemonID) {
+        if (pokeBuyerAddress == pokeCentral.pokemonToMaster(pokemonID)) throw;  // Verifica se quem está comprando é o próprio vendedor
         if (!pokeSelling[pokemonID]) throw;                                     // Verifica se o pokemon esta a venda
 
         uint pokeSalesID = pokeSaleIndex[pokemonID];

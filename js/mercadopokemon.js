@@ -14,7 +14,7 @@ var abiPokeMarket = [{"constant":true,"inputs":[{"name":"","type":"uint256"}],"n
 /* Endereços dos Dapps */
 var pokeCoinAddress = '0x14F83519a11f4F8fA7133FF55740E79Fd6dDb1de';
 var pokeCentralAddress = '0xbA2620358C17C917F7D117004fD10E4423C6359e';
-var pokeMarketAddress = '0x15b65Df565D03f8B38d861194ed7d84C45342F4A';
+var pokeMarketAddress = '0x2Ba25711fa1f94998d875Bf80aCBc2CcCDF9ABBB';
 
 /* Carregamento dos Contratos */
 var MyPokeCoinContract = web3.eth.contract(abiPokeCoin);
@@ -56,8 +56,8 @@ lightwallet.keystore.deriveKeyFromPassword(password, function(err, pwDerivedKey)
 
 	accountAddress = keystore.getAddresses()[0];
 
-	document.getElementById("accountAddress").innerText = "Account Address: " + accountAddress;
-	document.getElementById("seed").innerText = "Seed: " + seed;
+	document.getElementById("accountAddress").innerText = accountAddress;
+	document.getElementById("seed").innerText = seed;
 		
 	web3.eth.defaultAccount = eth.accounts[0];
 
@@ -71,8 +71,8 @@ function showStatus(){
 	
 	
 	/* Constrói informações sobre cada Pokémon da conta */
-	var html = '<table>';
-	html += '<tr><td>ID</td><td>Pokemon</td><td>Tipo</td><td>CP</CP><td>HP</td></tr>'
+	var html = '<table class="table table-striped">';
+	html += '<thead><tr><th>ID</th><th>Pokemon</th><th>Tipo</th><th>CP</CP><th>HP</th></tr></thead><tbody>'
 	for (i=0; i<qtdePokemons; i++){
 		html += '<tr>'
 		var pokeID = pokeCentral.balanceOf('0x'+accountAddress, i);
@@ -82,14 +82,14 @@ function showStatus(){
 		}
 		html += '</tr>';
 	}
-	html+='</table>'
+	html+='</tbody></table>'
 	
 	document.getElementById("pokemonList").innerHTML = html;
 
 	/* Constrói as vendas ativas */
 	var html2 = '';
-	html2 = '<table>'
-	html2 += '<tr><td>ID</td><td>Pokemon</td><td>Tipo</td><td>CP</CP><td>HP</td><td>Valor</td><td>Proprietario</td></tr>';
+	html2 = '<table class="table table-striped">'
+	html2 += '<thead><tr><th>ID</th><th>Pokemon</th><th>Tipo</th><th>CP</CP><th>HP</th><th>Valor</th><th>Dono</th><th>#</th></tr></thead><tbody>';
 	for (i=0;;i++){
 		if (pokeMarket.pokeSales(i)[0] == '0x') break;
 		if (pokeMarket.pokeSales(i)[5]){ 
@@ -100,10 +100,16 @@ function showStatus(){
 				html2 += '<td>' + pokeCentral.pokemons(saleID)[j] + '</td>';
 			}
 			html2 += '<td>' + pokeMarket.pokeSales(i)[3].toNumber() + ' pkc</td>';
-			html2 += '<td>' + pokeMarket.pokeSales(i)[0] + '</td>';
+			html2 += '<td>' + pokeMarket.pokeSales(i)[0].substring(0,6) + '...'+ '</td>';
+			if (pokeMarket.pokeSales(i)[0] == '0x'+accountAddress){
+				html2 += '<td><button type="button" class="btn btn-xs btn-info" onclick="stopSell(' + saleID + ')">Cancel</button></td>';
+			} else {
+				html2 += '<td><button type="button" class="btn btn-xs btn-success" onclick="setBuy(' + saleID + ')">Comprar</button></td>';
+			}
 			html2 += '</tr>';
 		}		
 	}
+	html2 += '</tbody></table>'
 	document.getElementById("pokeSells").innerHTML = html2;
 };
 
@@ -123,18 +129,30 @@ function setSell(){
 	var pokePriceSell = document.getElementById("pokePriceSell").value = '';
 }
 
-function setBuy(){
-	var pokeIDBuy = document.getElementById("pokeIDBuy").value;
+function setBuy(pokemonID){
+	var pokeIDBuy = pokemonID;
 	pokeMarket.buyPokemon('0x'+accountAddress, pokeIDBuy, {value: 0, gas: 428638, gasPrice: 20000000000}, function(err, hash) {
 		if (!err){
 			console.log("Transacao enviada: " + hash);
-			document.getElementById("msgCompra").innerText = hash;
+			document.getElementById("msgMercado").innerText = hash;
 		} else {
 			console.log("Erro no envio: " + err);
-			document.getElementById("msgCompra").innerText = err;
+			document.getElementById("msgMercado").innerText = err;
 		};
 	});
-	pokeIDBuy = document.getElementById("pokeIDBuy").value = '';
+	pokeIDBuy = '';
+}
+
+function stopSell(pokemonID){
+	pokeMarket.stopSale('0x'+accountAddress, pokemonID, {value: 0, gas: 428638, gasPrice: 20000000000}, function(err, hash) {
+		if (!err){
+			console.log("Transacao enviada: " + hash);
+			document.getElementById("msgMercado").innerText = hash;
+		} else {
+			console.log("Erro no envio: " + err);
+			document.getElementById("msgMercado").innerText = err;
+		};
+	});
 }
 
 
