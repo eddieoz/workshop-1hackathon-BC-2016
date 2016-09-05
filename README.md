@@ -25,7 +25,7 @@ Também é apresentado o conceito de um ambiente sem infraestrutura, que usa o b
 4. Carregue contracts/pokemarket.sol no Mist e utilize os endereços PokeCoinAddress e PokeCentralAddress para lançar o contrato.
   - Atualize o endereço PokeMarketAddress do arquivo accounts-for-testing.txt com o novo endereço.
 5. Atualize o PokeMarketAddress nos contratos PokeCoin e PokeCentral  
-6. Atualize as variáveis PokeCoinAddress, PokeCentralAddress e PokeMarketAddress em player1.html e player2.html
+6. Atualize as variáveis PokeCoinAddress, PokeCentralAddress e PokeMarketAddress em mercadopokemon.js
 7. Carregue player1.html e player2.html em janelas separadas
 
 ## Funcionamento: 
