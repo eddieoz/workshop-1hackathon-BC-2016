@@ -1,3 +1,25 @@
+/*
+Copyright (c) 2016 Edilson Osorio Junior - OriginalMy.com
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+*/
+
 /* Prototipagem dos contratos que serao chamados a partir deste */
 contract pokeCoinContract { mapping (address => uint256) public balanceOf; function transferFrom(address _from, address _to, uint256 _value){  } }
 contract pokeCentralContract { mapping (uint256 => address) public pokemonToMaster; function transferPokemon(address _from, address _to, uint256 _pokemonID) {  } }
@@ -27,6 +49,7 @@ contract pokeMarket is accessControlled {
     pokeCentralContract public pokeCentral;
     
     uint public totalPokemonSales;
+    uint public totalActiveSales;
     
     PokeSale[] public pokeSales;
 
@@ -75,6 +98,7 @@ contract pokeMarket is accessControlled {
         addPokemonToSellingList(pokeSellerAddress, pokemonID);                      // Adiciona esta venda na lista de vendas
         
         totalPokemonSales+=1;
+        totalActiveSales+=1;
         
         NewSale(pokeSellerAddress, pokemonID, pokemonSalePrice);                    // Notifica os clientes que há uma nova venda
         return (true);
@@ -94,7 +118,7 @@ contract pokeMarket is accessControlled {
         
         delPokemonFromSellingList(pokeSellerAddress, pokemonID);
 
-        totalPokemonSales-=1;
+        totalActiveSales-=1;
         
         StopSale(pokeSellerAddress, pokemonID);
     }

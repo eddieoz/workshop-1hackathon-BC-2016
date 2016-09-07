@@ -1,3 +1,25 @@
+/*
+Copyright (c) 2016 Edilson Osorio Junior - OriginalMy.com
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+*/
+
 contract accessControlled {
     address public owner;
     address public pokeMarketAddress;
@@ -32,7 +54,6 @@ contract PokeCentral is accessControlled {
 
     mapping (uint256 => address) public pokemonToMaster;
     mapping (address => uint256) public pokeOwnerIndex;
-    mapping (uint => uint256) public pokemonIndex;
     mapping (address => uint256) public totalPokemonsFromMaster;
     mapping (address => uint256[]) public balanceOf;
 
@@ -102,7 +123,6 @@ contract PokeCentral is accessControlled {
         
         p.pokemonHash = sha3(p.pokeNumber,p.pokeName,p.pokeType,p.pokeCP,p.pokeHP); // Hash de verificacao das infos do pokémon
         p.pokeOwner = owner;
-        pokemonIndex[pokemonNumber] = pokemonID;
         pokemonToMaster[pokemonID] = owner;
         addPokemonToMaster(owner, pokemonID);
         
@@ -112,15 +132,14 @@ contract PokeCentral is accessControlled {
     }
 
     /* Alterar CP e HP de um Pokemon */
-    function updatePokemon(uint _pokemonNumber, uint _cp, uint _hp ) onlyOwner returns (bool success) {
-        uint pokemonID = pokemonIndex[_pokemonNumber];
-        Pokemon p = pokemons[pokemonID];
+    function updatePokemon(uint _pokemonID, uint _cp, uint _hp ) onlyOwner returns (bool success) {
+        Pokemon p = pokemons[_pokemonID];
         p.pokeCP = _cp;
         p.pokeHP = _hp;
 
         p.pokemonHash = sha3(p.pokeNumber,p.pokeName,p.pokeType,p.pokeCP,p.pokeHP);
 
-        UpdatePokemon(pokemonID, p.pokeName, p.pokeCP, p.pokeHP);
+        UpdatePokemon(_pokemonID, p.pokeName, p.pokeCP, p.pokeHP);
         return true;
         
     }    
